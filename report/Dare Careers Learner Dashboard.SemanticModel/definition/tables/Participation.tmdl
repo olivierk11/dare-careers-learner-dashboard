@@ -1,42 +1,50 @@
 table Participation
+	isHidden
 	lineageTag: acb32fcb-a9c7-4268-81c6-15388258ab15
 
 	column Cohort
 		dataType: string
+		isHidden
 		lineageTag: 50555873-add6-4ce3-9264-553a79cae0a7
 		summarizeBy: none
 		sourceColumn: Cohort
+
+		changedProperty = IsHidden
 
 		annotation SummarizationSetBy = Automatic
 
 	column Track
 		dataType: string
+		isHidden
 		lineageTag: 4f919eb4-bdfa-4696-8798-e381a897659e
 		summarizeBy: none
 		sourceColumn: Track
+
+		changedProperty = IsHidden
 
 		annotation SummarizationSetBy = Automatic
 
 	column Week
 		dataType: int64
+		isHidden
 		formatString: 0
 		lineageTag: fdc28178-74c3-48e8-aa15-d0f1f0b5c077
-		summarizeBy: sum
+		summarizeBy: none
 		sourceColumn: Week
+
+		changedProperty = IsHidden
 
 		annotation SummarizationSetBy = Automatic
 
 	column Date
 		dataType: dateTime
+		isHidden
 		formatString: Long Date
 		lineageTag: 3b2a783b-862f-4f95-bbc7-421ca9e1143d
 		summarizeBy: none
 		sourceColumn: Date
 
-		variation Variation
-			isDefault
-			relationship: cf339d87-ba7b-4831-989f-11339bccf447
-			defaultHierarchy: LocalDateTable_a6d3a565-9c10-43fa-b323-858f61a810df.'Date Hierarchy'
+		changedProperty = IsHidden
 
 		annotation SummarizationSetBy = Automatic
 
@@ -44,26 +52,35 @@ table Participation
 
 	column Email
 		dataType: string
+		isHidden
 		lineageTag: 52b040e3-6542-471d-b480-416fc3609795
 		summarizeBy: none
 		sourceColumn: Email
+
+		changedProperty = IsHidden
 
 		annotation SummarizationSetBy = Automatic
 
 	column 'Learner Name'
 		dataType: string
+		isHidden
 		lineageTag: d7296f4c-fa9d-41ae-8a60-06d355d2b7b7
 		summarizeBy: none
 		sourceColumn: Learner Name
+
+		changedProperty = IsHidden
 
 		annotation SummarizationSetBy = Automatic
 
 	column Participated
 		dataType: int64
+		isHidden
 		formatString: 0
 		lineageTag: 82b7f59c-8405-40d7-8930-165fc0622995
 		summarizeBy: sum
 		sourceColumn: Participated
+
+		changedProperty = IsHidden
 
 		annotation SummarizationSetBy = Automatic
 
@@ -134,6 +151,8 @@ table Participation
 				    #"Changed Type" = Table.TransformColumnTypes(Result,{{"Learner Name", type text}})
 				in
 				    #"Changed Type"
+
+	changedProperty = IsHidden
 
 	annotation PBI_NavigationStepName = Navigation
 
