@@ -4,7 +4,7 @@
     {
       "ordinal": 0,
       "scrollPosition": {
-        "x": 202.39999389648438,
+        "x": 0.22655698429821314,
         "y": 0
       },
       "nodes": [
@@ -19,12 +19,12 @@
             "height": 272,
             "width": 234
           },
-          "zIndex": 0
+          "zIndex": 1
         },
         {
           "location": {
-            "x": 653.31677398429247,
-            "y": 233.1113242341271
+            "x": 495.6478449842931,
+            "y": 32.924931234127847
           },
           "nodeIndex": "Attendance",
           "nodeLineageTag": "965cd080-8918-4928-b56e-186f3edd497a",
@@ -32,12 +32,12 @@
             "height": 296,
             "width": 234
           },
-          "zIndex": 0
+          "zIndex": 6
         },
         {
           "location": {
-            "x": 369.18701841954021,
-            "y": 546.36224707502743
+            "x": 654.40833941953929,
+            "y": 544.59068607502741
           },
           "nodeIndex": "Learners",
           "nodeLineageTag": "2e06bd47-dc24-4cfc-8ed3-ab918a5a1350",
@@ -45,7 +45,7 @@
             "height": 300,
             "width": 234
           },
-          "zIndex": 0
+          "zIndex": 2
         },
         {
           "location": {
@@ -58,14 +58,40 @@
             "height": 248,
             "width": 234
           },
-          "zIndex": 0
+          "zIndex": 3
         },
         {
           "location": {
-            "x": 887.31677398429247,
-            "y": 348.18112353751371
+            "x": 936.92048198429245,
+            "y": 43.472631537514872
           },
           "nodeIndex": "Date",
+          "nodeLineageTag": "1ac5a6ea-2cb4-495b-a440-83cd75bdce6a",
+          "size": {
+            "height": 200,
+            "width": 234
+          },
+          "zIndex": 4
+        },
+        {
+          "location": {
+            "x": 1186.8645309842921,
+            "y": 426.12980753751339
+          },
+          "nodeIndex": "Weeks",
+          "nodeLineageTag": "1a50c05c-eb82-4301-8122-65ed019cab27",
+          "size": {
+            "height": 200,
+            "width": 234
+          },
+          "zIndex": 5
+        },
+        {
+          "location": {
+            "x": 1420.8645309842921,
+            "y": 347.2953430375137
+          },
+          "nodeIndex": "_Measures",
           "size": {
             "height": 200,
             "width": 234
@@ -74,7 +100,7 @@
         }
       ],
       "name": "All tables",
-      "zoomValue": 100,
+      "zoomValue": 56.447393005377954,
       "pinKeyFieldsToTop": false,
       "showExtraHeaderInfo": false,
       "hideKeyFieldsWhenCollapsed": false,
