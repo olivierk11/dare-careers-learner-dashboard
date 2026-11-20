@@ -1,0 +1,33 @@
+table Weeks
+	lineageTag: 1a50c05c-eb82-4301-8122-65ed019cab27
+
+	column Week
+		formatString: 0
+		lineageTag: 6e0e84ed-30f3-4e41-8379-7c82a5233a4e
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Week]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Week Label'
+		lineageTag: b2124931-69e2-43dd-881b-e649d454631f
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Week Label]
+		sortByColumn: Week
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Weeks = calculated
+		mode: import
+		source =
+				
+				SELECTCOLUMNS (
+				    GENERATESERIES ( 1, MAX ( Attendance[Week] ), 1 ),
+				    "Week", [Value],
+				    "Week Label", "Week " & [Value]
+				)
+
+	annotation PBI_Id = e1b7ed05d557453fb7ce198ed04e6df1
+
