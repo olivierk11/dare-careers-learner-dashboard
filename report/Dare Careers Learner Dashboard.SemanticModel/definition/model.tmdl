@@ -15,15 +15,14 @@ annotation PBI_QueryOrder = ["DataFolderPath","Attendance","Assessments","Status
 
 ref table Attendance
 ref table DateTableTemplate_b7a7f158-c4b3-4e9a-aea1-405dc6a6d38d
-ref table LocalDateTable_428ce7c2-8c6f-44cc-8543-e6c8684c12c0
 ref table Assessments
-ref table LocalDateTable_0234382f-b8c5-4bba-a14f-9423585a8885
 ref table Participation
-ref table LocalDateTable_a6d3a565-9c10-43fa-b323-858f61a810df
 ref table Learners
 ref table LocalDateTable_2ffaa75b-50a3-4f47-8f09-a2f438ea2c6b
 ref table LocalDateTable_6a6c8c68-bceb-4cb9-8823-449fd7b1e285
 ref table Date
+ref table Weeks
+ref table _Measures
 
 ref cultureInfo en-US
 
