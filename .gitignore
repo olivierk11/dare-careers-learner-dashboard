@@ -1,0 +1,23 @@
+# ------------------------------------------------------------
+# Dare Careers Learner Dashboard - .gitignore
+# ------------------------------------------------------------
+
+# Source data (not published; see README "Data" section)
+data/
+
+# Power BI Project local and cache files
+**/.pbi/localSettings.json
+**/.pbi/cache.abf
+
+# Excel / Office temporary lock files
+~$*
+
+# Windows system files
+Thumbs.db
+desktop.ini
+
+# macOS system files
+.DS_Store
+
+# Editor settings
+.vscode/
