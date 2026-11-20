@@ -1,18 +1,3 @@
-relationship e63ae0e0-cfc6-4d2f-9c6c-be48478a0082
-	joinOnDateBehavior: datePartOnly
-	fromColumn: Attendance.Date
-	toColumn: LocalDateTable_428ce7c2-8c6f-44cc-8543-e6c8684c12c0.Date
-
-relationship 428a6197-a1df-434a-a276-51c69df33456
-	joinOnDateBehavior: datePartOnly
-	fromColumn: Assessments.Date
-	toColumn: LocalDateTable_0234382f-b8c5-4bba-a14f-9423585a8885.Date
-
-relationship cf339d87-ba7b-4831-989f-11339bccf447
-	joinOnDateBehavior: datePartOnly
-	fromColumn: Participation.Date
-	toColumn: LocalDateTable_a6d3a565-9c10-43fa-b323-858f61a810df.Date
-
 relationship b1c19177-f7c0-40fa-8fd3-06602b17c68c
 	joinOnDateBehavior: datePartOnly
 	fromColumn: Learners.'Last Attended Date'
@@ -23,13 +8,39 @@ relationship 452c918b-6a31-4d5a-8da7-72141747acf1
 	fromColumn: Learners.'Program End Date'
 	toColumn: LocalDateTable_6a6c8c68-bceb-4cb9-8823-449fd7b1e285.Date
 
-relationship AutoDetected_6e597ad8-dc67-48f5-94f1-a2714dda0e7c
-	isActive: false
-	fromColumn: Attendance.'Learner Name'
-	toColumn: Learners.'Learner Name'
+relationship 61a9baf7-fbfa-c95b-61cf-6e7b6f2c2b78
+	fromColumn: Attendance.Email
+	toColumn: Learners.Email
 
-relationship AutoDetected_0fed4cc6-5164-4be8-a20f-f0803cceb1af
-	isActive: false
-	fromColumn: Participation.'Learner Name'
-	toColumn: Learners.'Learner Name'
+relationship d5c7ab50-6417-2f73-7f5b-2bf57482fac7
+	fromColumn: Participation.Email
+	toColumn: Learners.Email
+
+relationship e6bbc06a-2a66-e540-aaf4-763f5c6bcbf5
+	fromColumn: Assessments.Email
+	toColumn: Learners.Email
+
+relationship 1f7c5fd4-5b4a-245f-f56f-c5320989ec33
+	fromColumn: Attendance.Date
+	toColumn: Date.Date
+
+relationship bd27e638-9729-703b-f0c0-2aeb1f7c0454
+	fromColumn: Participation.Date
+	toColumn: Date.Date
+
+relationship 45e3da14-8b0e-ffc2-ff36-6ebbb56ce7ef
+	fromColumn: Assessments.Date
+	toColumn: Date.Date
+
+relationship 6cb81a87-b8ac-8bb8-0042-3eeb837c671e
+	fromColumn: Attendance.Week
+	toColumn: Weeks.Week
+
+relationship 4fd7a2ca-5aeb-b30c-a372-048beeac117b
+	fromColumn: Participation.Week
+	toColumn: Weeks.Week
+
+relationship b7231897-b856-c037-dda7-5d4f99b0b103
+	fromColumn: Assessments.Week
+	toColumn: Weeks.Week
 
