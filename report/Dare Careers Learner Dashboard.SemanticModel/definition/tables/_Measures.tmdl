@@ -1,0 +1,111 @@
+table _Measures
+	lineageTag: cf9b23de-9f9f-43db-887b-f7647b9969e5
+
+	measure 'Total Learners' = COUNTROWS ( Learners )
+		formatString: 0
+		lineageTag: f0efe801-ebba-47fc-94a0-12fd0d731925
+
+	measure 'Total Graduations' = CALCULATE ( COUNTROWS ( Learners ), Learners[Graduation Status] = "Graduate" ) + 0
+		formatString: 0
+		lineageTag: 931acd64-16c4-480b-b26b-02484b8d4176
+
+	measure 'Total Certifications' = CALCULATE ( COUNTROWS ( Learners ), Learners[Certification Status] = "Certified" ) + 0
+		formatString: 0
+		lineageTag: f8019c0d-1fe3-4a07-a82a-bc0530b9ef77
+
+	measure 'Total Dropouts' = CALCULATE ( COUNTROWS ( Learners ), Learners[Is Dropout] = 1 ) + 0
+		formatString: 0
+		lineageTag: 7cf6d186-a92c-47ca-839a-635065bdb944
+
+	measure 'Graduation Rate' = DIVIDE ( [Total Graduations], [Total Learners] )
+		formatString: 0.0%;-0.0%;0.0%
+		lineageTag: a639ff20-400a-4b60-b274-b87115a5f301
+
+	measure 'Certification Rate' = DIVIDE ( [Total Certifications], [Total Learners] )
+		formatString: 0.0%;-0.0%;0.0%
+		lineageTag: acfe2cd1-e12e-444a-85e3-67464ea3ed7c
+
+	measure 'Dropout Rate' = DIVIDE ( [Total Dropouts], [Total Learners] )
+		formatString: 0.0%;-0.0%;0.0%
+		lineageTag: 16e81389-e70f-4d8b-a839-3f08312e8a20
+
+	measure 'Class Sessions' = COUNTROWS ( Attendance )
+		formatString: 0
+		lineageTag: 4acc4339-d417-4763-8026-2439d3445a86
+
+	measure 'Sessions Attended' = SUM ( Attendance[Attended] )
+		formatString: 0
+		lineageTag: 458ec3b3-375b-4569-949a-787c2b1af0ff
+
+	measure 'Attendance Rate' = DIVIDE ( [Sessions Attended], [Class Sessions] )
+		formatString: 0.0%;-0.0%;0.0%
+		lineageTag: eaddbecc-fd3c-4fe2-b4e7-cb68c85108cc
+
+	measure 'Avg Attendance Rate' = AVERAGEX ( Learners, [Attendance Rate] )
+		formatString: 0.0%;-0.0%;0.0%
+		lineageTag: 89034dab-5f7c-401f-ab53-ae56666c68bd
+
+	measure 'Total Hours in Class' = DIVIDE ( SUM ( Attendance[Minutes] ), 60 )
+		formatString: 0
+		lineageTag: 7ca698fc-241c-4268-bd05-af432577b57d
+
+		annotation PBI_FormatHint = {"isDecimal":true}
+
+	measure 'Avg Hours per Learner' = AVERAGEX ( Learners, [Total Hours in Class] )
+		formatString: 0
+		lineageTag: 5856f3ad-4030-461c-9962-7171c0dd36b5
+
+		annotation PBI_FormatHint = {"isDecimal":true}
+
+	measure 'Participation Days' = COUNTROWS ( Participation )
+		formatString: 0
+		lineageTag: f79a053c-918c-4ead-a055-50dfd2d4a5b7
+
+	measure 'Participation Rate' = DIVIDE ( [Participation Days], [Class Sessions] )
+		formatString: 0.0%;-0.0%;0.0%
+		lineageTag: 02337677-eeeb-4e03-8df3-5cf8d21236de
+
+	measure 'Avg Participation Rate' = AVERAGEX ( Learners, [Participation Rate] )
+		formatString: 0.0%;-0.0%;0.0%
+		lineageTag: 8d79098a-025c-4037-9f02-b6f86aee9267
+
+	measure 'Avg Assessment Score' = AVERAGE ( Assessments[Score] )
+		formatString: 0.0
+		lineageTag: d0a5ec17-cb95-4c6f-821d-f823af912730
+
+	measure 'Avg Lab Score' = CALCULATE ( [Avg Assessment Score], Assessments[Assessment Type] = "Lab" )
+		formatString: 0.0
+		lineageTag: f04fe45f-49ca-47d7-a647-d29355026838
+
+	measure 'Avg Quiz Score' = CALCULATE ( [Avg Assessment Score], Assessments[Assessment Type] = "Quiz" )
+		formatString: 0.0
+		lineageTag: f22acadf-1c73-40b0-a996-8768dcae6b3f
+
+	measure 'Avg Assessment Score per Learner' = AVERAGEX ( Learners, [Avg Assessment Score] )
+		formatString: 0.0
+		lineageTag: 708bc47f-2222-4b0b-ac12-568d442ef9c3
+
+	measure 'Labs Completed' = CALCULATE ( SUM ( Assessments[Completed] ), Assessments[Assessment Type] = "Lab" )
+		formatString: 0
+		lineageTag: e627036c-4096-4202-bb1c-8763a10e21f6
+
+	measure 'Avg Labs Completed' = AVERAGEX ( Learners, [Labs Completed] )
+		formatString: 0.0
+		lineageTag: 9770f036-d972-4bbf-a7a8-be8e7808dc18
+
+	column Placeholder
+		isHidden
+		formatString: 0
+		lineageTag: 361efe08-e080-48f1-9752-467f3021ff9f
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Placeholder]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition _Measures = calculated
+		mode: import
+		source = ROW ( "Placeholder", BLANK () )
+
+	annotation PBI_Id = 16218f0f06f749d5a23aeb5bcc96ca0f
+
