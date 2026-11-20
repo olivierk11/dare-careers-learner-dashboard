@@ -1,42 +1,50 @@
 table Attendance
+	isHidden
 	lineageTag: 965cd080-8918-4928-b56e-186f3edd497a
 
 	column Cohort
 		dataType: string
+		isHidden
 		lineageTag: 8e884049-c517-4efb-8b50-aa8806c75a6a
 		summarizeBy: none
 		sourceColumn: Cohort
+
+		changedProperty = IsHidden
 
 		annotation SummarizationSetBy = Automatic
 
 	column Track
 		dataType: string
+		isHidden
 		lineageTag: 6303134a-d823-40c5-a897-7829e137686b
 		summarizeBy: none
 		sourceColumn: Track
+
+		changedProperty = IsHidden
 
 		annotation SummarizationSetBy = Automatic
 
 	column Week
 		dataType: int64
+		isHidden
 		formatString: 0
 		lineageTag: 6dca6562-d18d-4c89-b6f3-33a17f1d2139
-		summarizeBy: sum
+		summarizeBy: none
 		sourceColumn: Week
+
+		changedProperty = IsHidden
 
 		annotation SummarizationSetBy = Automatic
 
 	column Date
 		dataType: dateTime
+		isHidden
 		formatString: Long Date
 		lineageTag: 65a14803-cb0b-4bd9-bc5d-e7d3bdce015b
 		summarizeBy: none
 		sourceColumn: Date
 
-		variation Variation
-			isDefault
-			relationship: e63ae0e0-cfc6-4d2f-9c6c-be48478a0082
-			defaultHierarchy: LocalDateTable_428ce7c2-8c6f-44cc-8543-e6c8684c12c0.'Date Hierarchy'
+		changedProperty = IsHidden
 
 		annotation SummarizationSetBy = Automatic
 
@@ -44,25 +52,34 @@ table Attendance
 
 	column Email
 		dataType: string
+		isHidden
 		lineageTag: 3a6011c9-d868-42bb-af5d-6f640b83563d
 		summarizeBy: none
 		sourceColumn: Email
+
+		changedProperty = IsHidden
 
 		annotation SummarizationSetBy = Automatic
 
 	column 'Learner Name'
 		dataType: string
+		isHidden
 		lineageTag: f6572cdc-5e6a-4241-a7a0-009b924b0ffe
 		summarizeBy: none
 		sourceColumn: Learner Name
+
+		changedProperty = IsHidden
 
 		annotation SummarizationSetBy = Automatic
 
 	column Minutes
 		dataType: double
+		isHidden
 		lineageTag: c9aa533e-f0f0-47f8-86a2-b4f15259d7af
 		summarizeBy: sum
 		sourceColumn: Minutes
+
+		changedProperty = IsHidden
 
 		annotation SummarizationSetBy = Automatic
 
@@ -70,19 +87,25 @@ table Attendance
 
 	column Sessions
 		dataType: int64
+		isHidden
 		formatString: 0
 		lineageTag: 6d869e35-577d-4629-8b33-a72f177cb016
 		summarizeBy: sum
 		sourceColumn: Sessions
 
+		changedProperty = IsHidden
+
 		annotation SummarizationSetBy = Automatic
 
 	column Attended
 		dataType: int64
+		isHidden
 		formatString: 0
 		lineageTag: 27ed588b-de18-4c86-b129-f78263c07dc9
 		summarizeBy: sum
 		sourceColumn: Attended
+
+		changedProperty = IsHidden
 
 		annotation SummarizationSetBy = Automatic
 
@@ -143,6 +166,8 @@ table Attendance
 				                 if [Minutes] > 30 then 1 else 0, Int64.Type)
 				in
 				    AddAttended
+
+	changedProperty = IsHidden
 
 	annotation PBI_NavigationStepName = Navigation
 
