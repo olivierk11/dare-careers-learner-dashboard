@@ -1,0 +1,86 @@
+table Date
+	lineageTag: 1ac5a6ea-2cb4-495b-a440-83cd75bdce6a
+	dataCategory: Time
+
+	column Date
+		isKey
+		formatString: General Date
+		lineageTag: 908ee1a4-08a5-4b13-a737-c008fc768978
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Date]
+
+		annotation SummarizationSetBy = Automatic
+
+	column Year
+		formatString: 0
+		lineageTag: 2a6e1060-25a6-4574-baa3-e8de3c399d42
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Year]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Month Number'
+		formatString: 0
+		lineageTag: 0a09ff7a-1f95-4257-9dbf-7d27af8eab14
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Month Number]
+
+		annotation SummarizationSetBy = Automatic
+
+	column Month
+		lineageTag: e63b1fa0-3213-461b-bb1f-93385adb3f8f
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Month]
+		sortByColumn: 'Month Number'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Month Year'
+		lineageTag: c44b58c1-dbfb-4d83-acae-f7a2b89f04f7
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Month Year]
+		sortByColumn: 'Year Month Sort'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Year Month Sort'
+		formatString: 0
+		lineageTag: 7ef33289-7a33-4c5d-9051-981dab754215
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Year Month Sort]
+
+		annotation SummarizationSetBy = Automatic
+
+	column Weekday
+		lineageTag: abaa94c7-561e-4610-937d-913b5d443a93
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Weekday]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Date = calculated
+		mode: import
+		source =
+				
+				VAR MinD = MIN ( Attendance[Date] )
+				VAR MaxD = MAX ( Attendance[Date] )
+				RETURN
+				ADDCOLUMNS (
+				    CALENDAR ( DATE ( YEAR ( MinD ), MONTH ( MinD ), 1 ), EOMONTH ( MaxD, 0 ) ),
+				    "Year", YEAR ( [Date] ),
+				    "Month Number", MONTH ( [Date] ),
+				    "Month", FORMAT ( [Date], "MMMM" ),
+				    "Month Year", FORMAT ( [Date], "MMM yyyy" ),
+				    "Year Month Sort", YEAR ( [Date] ) * 100 + MONTH ( [Date] ),
+				    "Weekday", FORMAT ( [Date], "ddd" )
+				)
+
+	annotation PBI_Id = 4c8bdf94b2434811b84fd5bd3a2bdb1d
+

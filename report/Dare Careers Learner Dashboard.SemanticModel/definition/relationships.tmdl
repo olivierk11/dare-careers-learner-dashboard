@@ -1,0 +1,35 @@
+relationship e63ae0e0-cfc6-4d2f-9c6c-be48478a0082
+	joinOnDateBehavior: datePartOnly
+	fromColumn: Attendance.Date
+	toColumn: LocalDateTable_428ce7c2-8c6f-44cc-8543-e6c8684c12c0.Date
+
+relationship 428a6197-a1df-434a-a276-51c69df33456
+	joinOnDateBehavior: datePartOnly
+	fromColumn: Assessments.Date
+	toColumn: LocalDateTable_0234382f-b8c5-4bba-a14f-9423585a8885.Date
+
+relationship cf339d87-ba7b-4831-989f-11339bccf447
+	joinOnDateBehavior: datePartOnly
+	fromColumn: Participation.Date
+	toColumn: LocalDateTable_a6d3a565-9c10-43fa-b323-858f61a810df.Date
+
+relationship b1c19177-f7c0-40fa-8fd3-06602b17c68c
+	joinOnDateBehavior: datePartOnly
+	fromColumn: Learners.'Last Attended Date'
+	toColumn: LocalDateTable_2ffaa75b-50a3-4f47-8f09-a2f438ea2c6b.Date
+
+relationship 452c918b-6a31-4d5a-8da7-72141747acf1
+	joinOnDateBehavior: datePartOnly
+	fromColumn: Learners.'Program End Date'
+	toColumn: LocalDateTable_6a6c8c68-bceb-4cb9-8823-449fd7b1e285.Date
+
+relationship AutoDetected_6e597ad8-dc67-48f5-94f1-a2714dda0e7c
+	isActive: false
+	fromColumn: Attendance.'Learner Name'
+	toColumn: Learners.'Learner Name'
+
+relationship AutoDetected_0fed4cc6-5164-4be8-a20f-f0803cceb1af
+	isActive: false
+	fromColumn: Participation.'Learner Name'
+	toColumn: Learners.'Learner Name'
+

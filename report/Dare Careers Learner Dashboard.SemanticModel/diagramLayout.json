@@ -1,0 +1,86 @@
+{
+  "version": "1.1.0",
+  "diagrams": [
+    {
+      "ordinal": 0,
+      "scrollPosition": {
+        "x": 202.39999389648438,
+        "y": 0
+      },
+      "nodes": [
+        {
+          "location": {
+            "x": 50,
+            "y": -50
+          },
+          "nodeIndex": "Assessments",
+          "nodeLineageTag": "6e12f11c-4f08-45c4-ae04-ca031fc23bdc",
+          "size": {
+            "height": 272,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 653.31677398429247,
+            "y": 233.1113242341271
+          },
+          "nodeIndex": "Attendance",
+          "nodeLineageTag": "965cd080-8918-4928-b56e-186f3edd497a",
+          "size": {
+            "height": 296,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 369.18701841954021,
+            "y": 546.36224707502743
+          },
+          "nodeIndex": "Learners",
+          "nodeLineageTag": "2e06bd47-dc24-4cfc-8ed3-ab918a5a1350",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 83.574114276895841,
+            "y": 546.38808440795026
+          },
+          "nodeIndex": "Participation",
+          "nodeLineageTag": "acb32fcb-a9c7-4268-81c6-15388258ab15",
+          "size": {
+            "height": 248,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 887.31677398429247,
+            "y": 348.18112353751371
+          },
+          "nodeIndex": "Date",
+          "size": {
+            "height": 200,
+            "width": 234
+          },
+          "zIndex": 0
+        }
+      ],
+      "name": "All tables",
+      "zoomValue": 100,
+      "pinKeyFieldsToTop": false,
+      "showExtraHeaderInfo": false,
+      "hideKeyFieldsWhenCollapsed": false,
+      "tablesLocked": false
+    }
+  ],
+  "selectedDiagram": "All tables",
+  "defaultDiagram": "All tables"
+}

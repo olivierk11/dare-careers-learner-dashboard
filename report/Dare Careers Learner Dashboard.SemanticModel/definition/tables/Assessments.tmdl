@@ -1,0 +1,137 @@
+table Assessments
+	lineageTag: 6e12f11c-4f08-45c4-ae04-ca031fc23bdc
+
+	column Cohort
+		dataType: string
+		lineageTag: 69614611-ac37-4dfc-abbd-eb6dfbcd8cf3
+		summarizeBy: none
+		sourceColumn: Cohort
+
+		annotation SummarizationSetBy = Automatic
+
+	column Track
+		dataType: string
+		lineageTag: f803adb0-069e-4a3a-b434-838a85f10297
+		summarizeBy: none
+		sourceColumn: Track
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Assessment Type'
+		dataType: string
+		lineageTag: df07d723-e33e-49e6-a749-5cc0200be892
+		summarizeBy: none
+		sourceColumn: Assessment Type
+
+		annotation SummarizationSetBy = Automatic
+
+	column Email
+		dataType: string
+		lineageTag: bd4fca81-3ba9-4d95-8466-19773f0f12fc
+		summarizeBy: none
+		sourceColumn: Email
+
+		annotation SummarizationSetBy = Automatic
+
+	column Score
+		dataType: double
+		lineageTag: 04070f24-4038-45dc-915d-49382a76ebc5
+		summarizeBy: sum
+		sourceColumn: Score
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Week
+		dataType: int64
+		formatString: 0
+		lineageTag: 9653f4b0-8065-410e-a7c4-42aec7a0a669
+		summarizeBy: sum
+		sourceColumn: Week
+
+		annotation SummarizationSetBy = Automatic
+
+	column Completed
+		dataType: int64
+		formatString: 0
+		lineageTag: d0e01aaa-9836-40ab-ad0c-5269f993ae1d
+		summarizeBy: sum
+		sourceColumn: Completed
+
+		annotation SummarizationSetBy = Automatic
+
+	column Date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 3fa27948-0de1-42b0-afe2-752ea63882d1
+		summarizeBy: none
+		sourceColumn: Date
+
+		variation Variation
+			isDefault
+			relationship: 428a6197-a1df-434a-a276-51c69df33456
+			defaultHierarchy: LocalDateTable_0234382f-b8c5-4bba-a14f-9423585a8885.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	partition Assessments = m
+		mode: import
+		source =
+				let
+				    Source = Folder.Files(DataFolderPath),
+				    Files = Table.SelectRows(Source, each
+				              Text.Contains([Folder Path], "\Labs & Quizes\")
+				              and Text.Lower([Extension]) = ".xlsx"
+				              and not Text.StartsWith([Name], "~$")),
+				
+				    AddParts  = Table.AddColumn(Files, "Parts", each
+				                 List.Reverse(List.RemoveItems(Text.Split([Folder Path], "\"), {""}))),
+				    AddCohort = Table.AddColumn(AddParts, "Cohort", each [Parts]{2}, type text),
+				    AddTrack  = Table.AddColumn(AddCohort, "Track", each
+				                 if Text.Contains([Parts]{1}, "Cloud", Comparer.OrdinalIgnoreCase)
+				                 then "AWS Cloud" else "Power BI", type text),
+				
+				    AddSheets = Table.AddColumn(AddTrack, "Sheets", each
+				                 Table.SelectRows(Excel.Workbook([Content], true), each [Kind] = "Sheet")),
+				    KeepCols  = Table.SelectColumns(AddSheets, {"Cohort", "Track", "Sheets"}),
+				    ExpandSheets = Table.ExpandTableColumn(KeepCols, "Sheets", {"Name", "Data"}, {"Sheet", "Data"}),
+				    AddType   = Table.AddColumn(ExpandSheets, "Assessment Type", each
+				                 if Text.Contains([Sheet], "Lab", Comparer.OrdinalIgnoreCase) then "Lab"
+				                 else if Text.Contains([Sheet], "Quiz", Comparer.OrdinalIgnoreCase) then "Quiz"
+				                 else [Sheet], type text),
+				
+				    AddLong   = Table.AddColumn(AddType, "Long", each
+				                 let t   = [Data],
+				                     key = Table.ColumnNames(t){0},
+				                     u   = Table.UnpivotOtherColumns(t, {key}, "WeekLabel", "Score")
+				                 in  Table.RenameColumns(u, {{key, "Email"}})),
+				    Expanded  = Table.ExpandTableColumn(
+				                 Table.SelectColumns(AddLong, {"Cohort", "Track", "Assessment Type", "Long"}),
+				                 "Long", {"Email", "WeekLabel", "Score"}),
+				
+				    OnlyWeeks = Table.SelectRows(Expanded, each Text.StartsWith(Text.From([WeekLabel]), "Week")
+				                 and [Email] <> null and Text.Trim(Text.From([Email])) <> ""),
+				    CleanEmail = Table.TransformColumns(OnlyWeeks, {{"Email", each Text.Lower(Text.Trim(Text.From(_))), type text}}),
+				    AddWeek   = Table.AddColumn(CleanEmail, "Week", each
+				                 Number.From(Text.AfterDelimiter([WeekLabel], " ")), Int64.Type),
+				    TypedScore = Table.TransformColumns(AddWeek, {{"Score", each try Number.From(_) otherwise null, type number}}),
+				    AddCompleted = Table.AddColumn(TypedScore, "Completed", each
+				                 if [Score] <> null and [Score] > 0 then 1 else 0, Int64.Type),
+				    Result    = Table.RemoveColumns(AddCompleted, {"WeekLabel"})
+				    ,
+				    // Date for each assessment = last class day of that week (per cohort + track)
+				    WeekDates = Table.Group(Attendance, {"Cohort", "Track", "Week"}, {
+				                 {"Date", each List.Max([Date]), type date}}),
+				    JoinDate  = Table.NestedJoin(Result, {"Cohort", "Track", "Week"},
+				                 WeekDates, {"Cohort", "Track", "Week"}, "W", JoinKind.LeftOuter),
+				    WithDate  = Table.ExpandTableColumn(JoinDate, "W", {"Date"})
+				in
+				    WithDate
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

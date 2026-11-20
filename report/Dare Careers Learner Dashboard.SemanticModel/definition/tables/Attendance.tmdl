@@ -1,0 +1,150 @@
+table Attendance
+	lineageTag: 965cd080-8918-4928-b56e-186f3edd497a
+
+	column Cohort
+		dataType: string
+		lineageTag: 8e884049-c517-4efb-8b50-aa8806c75a6a
+		summarizeBy: none
+		sourceColumn: Cohort
+
+		annotation SummarizationSetBy = Automatic
+
+	column Track
+		dataType: string
+		lineageTag: 6303134a-d823-40c5-a897-7829e137686b
+		summarizeBy: none
+		sourceColumn: Track
+
+		annotation SummarizationSetBy = Automatic
+
+	column Week
+		dataType: int64
+		formatString: 0
+		lineageTag: 6dca6562-d18d-4c89-b6f3-33a17f1d2139
+		summarizeBy: sum
+		sourceColumn: Week
+
+		annotation SummarizationSetBy = Automatic
+
+	column Date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 65a14803-cb0b-4bd9-bc5d-e7d3bdce015b
+		summarizeBy: none
+		sourceColumn: Date
+
+		variation Variation
+			isDefault
+			relationship: e63ae0e0-cfc6-4d2f-9c6c-be48478a0082
+			defaultHierarchy: LocalDateTable_428ce7c2-8c6f-44cc-8543-e6c8684c12c0.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Email
+		dataType: string
+		lineageTag: 3a6011c9-d868-42bb-af5d-6f640b83563d
+		summarizeBy: none
+		sourceColumn: Email
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Learner Name'
+		dataType: string
+		lineageTag: f6572cdc-5e6a-4241-a7a0-009b924b0ffe
+		summarizeBy: none
+		sourceColumn: Learner Name
+
+		annotation SummarizationSetBy = Automatic
+
+	column Minutes
+		dataType: double
+		lineageTag: c9aa533e-f0f0-47f8-86a2-b4f15259d7af
+		summarizeBy: sum
+		sourceColumn: Minutes
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Sessions
+		dataType: int64
+		formatString: 0
+		lineageTag: 6d869e35-577d-4629-8b33-a72f177cb016
+		summarizeBy: sum
+		sourceColumn: Sessions
+
+		annotation SummarizationSetBy = Automatic
+
+	column Attended
+		dataType: int64
+		formatString: 0
+		lineageTag: 27ed588b-de18-4c86-b129-f78263c07dc9
+		summarizeBy: sum
+		sourceColumn: Attended
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Attendance = m
+		mode: import
+		source =
+				let
+				    // 1. All files under the data folder, keep only Zoom CSVs
+				    Source = Folder.Files(DataFolderPath),
+				    ZoomFiles = Table.SelectRows(Source, each [Extension] = ".csv"
+				                 and Text.Contains([Folder Path], "\Zoom Attendance\")),
+				
+				    // 2. Read Cohort / Track / Week from the folder path, Date from the file name
+				    //    Path looks like ...\Cohort 1\Cloud Training\Zoom Attendance\Week 1\
+				    AddParts  = Table.AddColumn(ZoomFiles, "Parts", each
+				                 List.Reverse(List.RemoveItems(Text.Split([Folder Path], "\"), {""}))),
+				    AddCohort = Table.AddColumn(AddParts, "Cohort", each [Parts]{3}, type text),
+				    AddTrack  = Table.AddColumn(AddCohort, "Track", each
+				                 if Text.Contains([Parts]{2}, "Cloud", Comparer.OrdinalIgnoreCase)
+				                 then "AWS Cloud" else "Power BI", type text),
+				    AddWeek   = Table.AddColumn(AddTrack, "Week", each
+				                 Number.From(Text.AfterDelimiter([Parts]{0}, " ")), Int64.Type),
+				    AddDate   = Table.AddColumn(AddWeek, "Date", each
+				                 Date.FromText(Text.BeforeDelimiter([Name], "."),
+				                 [Format = "dd-MMM-yyyy", Culture = "en-US"]), type date),
+				
+				    // 3. Open each CSV and stack them all into one table
+				    AddData   = Table.AddColumn(AddDate, "Data", each
+				                 Table.PromoteHeaders(Csv.Document([Content],
+				                 [Delimiter = ",", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				                 [PromoteAllScalars = true])),
+				    KeepCols  = Table.SelectColumns(AddData, {"Cohort", "Track", "Week", "Date", "Data"}),
+				    Expanded  = Table.ExpandTableColumn(KeepCols, "Data",
+				                 {"Name", "Email", "Duration", "Role"},
+				                 {"Learner Name", "Email", "Duration", "Role"}),
+				
+				    // 4. Clean text and convert Duration (h:mm:ss) to minutes
+				    Cleaned   = Table.TransformColumns(Expanded, {
+				                 {"Learner Name", Text.Trim, type text},
+				                 {"Email", each Text.Lower(Text.Trim(_)), type text},
+				                 {"Role", Text.Trim, type text}}),
+				    AddMinutes = Table.AddColumn(Cleaned, "Minutes", each
+				                 let d = Text.Trim(Text.From([Duration]))
+				                 in  if d = null or d = "" then null
+				                     else if Text.Contains(d, ":")
+				                          then Duration.TotalMinutes(Duration.FromText(d))   // Power BI track: h:mm:ss
+				                          else Number.From(d),                              // AWS track: plain minutes
+				                 type number),
+				
+				    // 5. One row per learner per day (adds up minutes if they left and rejoined)
+				    Grouped   = Table.Group(AddMinutes, {"Cohort", "Track", "Week", "Date", "Email"}, {
+				                 {"Learner Name", each List.First([Learner Name]), type text},
+				                 {"Minutes", each List.Sum([Minutes]), type number},
+				                 {"Sessions", each Table.RowCount(_), Int64.Type}}),
+				
+				    // 6. Attendance rule: more than 30 minutes = attended
+				    AddAttended = Table.AddColumn(Grouped, "Attended", each
+				                 if [Minutes] > 30 then 1 else 0, Int64.Type)
+				in
+				    AddAttended
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

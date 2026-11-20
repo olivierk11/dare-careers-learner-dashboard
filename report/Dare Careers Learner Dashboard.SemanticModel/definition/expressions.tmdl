@@ -1,0 +1,52 @@
+expression DataFolderPath = "C:\Users\PC\Desktop\Amalitech1\dare-careers-learner-dashboard\data\" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
+	lineageTag: 9d6c342e-05ad-468b-990d-2b8c2136b4ae
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Text
+
+expression Status =
+		let
+		    Source = Folder.Files(DataFolderPath),
+		    Files = Table.SelectRows(Source, each
+		              Text.Contains([Folder Path], "\Status of Learners\")
+		              and Text.Lower([Extension]) = ".xlsx"
+		              and not Text.StartsWith([Name], "~$")),
+		
+		    // Cohort and Track from ...\Cohort 1\Cloud Training\Status of Learners\
+		    AddParts  = Table.AddColumn(Files, "Parts", each
+		                 List.Reverse(List.RemoveItems(Text.Split([Folder Path], "\"), {""}))),
+		    AddCohort = Table.AddColumn(AddParts, "Cohort", each [Parts]{2}, type text),
+		    AddTrack  = Table.AddColumn(AddCohort, "Track", each
+		                 if Text.Contains([Parts]{1}, "Cloud", Comparer.OrdinalIgnoreCase)
+		                 then "AWS Cloud" else "Power BI", type text),
+		
+		    // Read the first sheet; name the 3 columns the same way for both tracks
+		    AddData   = Table.AddColumn(AddTrack, "Data", each
+		                 let wb   = Excel.Workbook([Content], true),
+		                     t    = Table.SelectRows(wb, each [Kind] = "Sheet"){0}[Data],
+		                     cols = Table.ColumnNames(t)
+		                 in  Table.RenameColumns(Table.SelectColumns(t, List.FirstN(cols, 3)),
+		                     {{cols{0}, "Email"}, {cols{1}, "Graduation Status"}, {cols{2}, "Certification Status"}})),
+		    KeepCols  = Table.SelectColumns(AddData, {"Cohort", "Track", "Data"}),
+		    Expanded  = Table.ExpandTableColumn(KeepCols, "Data",
+		                 {"Email", "Graduation Status", "Certification Status"}),
+		
+		    // Clean
+		    NoBlank   = Table.SelectRows(Expanded, each [Email] <> null and Text.Trim(Text.From([Email])) <> ""),
+		    Cleaned   = Table.TransformColumns(NoBlank, {
+		                 {"Email", each Text.Lower(Text.Trim(Text.From(_))), type text},
+		                 {"Graduation Status", each Text.Trim(Text.From(_)), type text},
+		                 {"Certification Status", each Text.Trim(Text.From(_)), type text}}),
+		
+		    // Certification type follows the track
+		    AddCertType = Table.AddColumn(Cleaned, "Certification Type", each
+		                 if [Track] = "AWS Cloud" then "AWS" else "Power BI", type text)
+		in
+		    AddCertType
+	lineageTag: e6a6d0a4-533f-46ec-aaee-b58e1bfaac33
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

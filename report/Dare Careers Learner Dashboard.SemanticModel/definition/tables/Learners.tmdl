@@ -1,0 +1,209 @@
+table Learners
+	lineageTag: 2e06bd47-dc24-4cfc-8ed3-ab918a5a1350
+
+	column Cohort
+		dataType: string
+		lineageTag: 2b41ab7d-323c-4485-8e54-7cfdece64854
+		summarizeBy: none
+		sourceColumn: Cohort
+
+		annotation SummarizationSetBy = Automatic
+
+	column Track
+		dataType: string
+		lineageTag: 3aa382d3-08e5-46fb-ad61-43efcf536bbd
+		summarizeBy: none
+		sourceColumn: Track
+
+		annotation SummarizationSetBy = Automatic
+
+	column Email
+		dataType: string
+		lineageTag: 8f26b5a9-2948-48b8-9d32-7f6906001214
+		summarizeBy: none
+		sourceColumn: Email
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Graduation Status'
+		dataType: string
+		lineageTag: 615da91d-6d7a-40d4-95ea-e1f52ebf749e
+		summarizeBy: none
+		sourceColumn: Graduation Status
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Certification Status'
+		dataType: string
+		lineageTag: d98da126-7c28-47fa-a32a-7d005af6e419
+		summarizeBy: none
+		sourceColumn: Certification Status
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Certification Type'
+		dataType: string
+		lineageTag: c35a08d5-0eff-427d-9378-e53256d548d6
+		summarizeBy: none
+		sourceColumn: Certification Type
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Days Present'
+		dataType: double
+		lineageTag: 6c43c3ce-9155-439b-905d-54bdb3a55046
+		summarizeBy: sum
+		sourceColumn: Days Present
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 'Days Attended'
+		dataType: double
+		lineageTag: 068cb78c-0ce2-4b1f-b648-476bd85afac8
+		summarizeBy: sum
+		sourceColumn: Days Attended
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 'Total Minutes'
+		dataType: double
+		lineageTag: a111d236-6666-4ddd-b345-560966ef65ea
+		summarizeBy: sum
+		sourceColumn: Total Minutes
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 'Last Attended Date'
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: acfaed01-2474-4cc0-b4ab-0efabb94d0c1
+		summarizeBy: none
+		sourceColumn: Last Attended Date
+
+		variation Variation
+			isDefault
+			relationship: b1c19177-f7c0-40fa-8fd3-06602b17c68c
+			defaultHierarchy: LocalDateTable_2ffaa75b-50a3-4f47-8f09-a2f438ea2c6b.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column 'Class Days'
+		dataType: int64
+		formatString: 0
+		lineageTag: a8ada12b-8b85-4082-a223-3f56f93a175b
+		summarizeBy: sum
+		sourceColumn: Class Days
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Program End Date'
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 3a80ff39-9e97-4c5d-aed5-328a6d3826af
+		summarizeBy: none
+		sourceColumn: Program End Date
+
+		variation Variation
+			isDefault
+			relationship: 452c918b-6a31-4d5a-8da7-72141747acf1
+			defaultHierarchy: LocalDateTable_6a6c8c68-bceb-4cb9-8823-449fd7b1e285.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column 'Learner Name'
+		dataType: string
+		lineageTag: 1b38c9fe-5755-4a81-9ce9-105cedf0a9bf
+		summarizeBy: none
+		sourceColumn: Learner Name
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Attendance Status'
+		dataType: string
+		lineageTag: 299d4905-8986-43c0-a8aa-4efd256d423e
+		summarizeBy: none
+		sourceColumn: Attendance Status
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Is Dropout'
+		dataType: int64
+		formatString: 0
+		lineageTag: ea3d2155-cb59-46b4-9938-af1460abfec2
+		summarizeBy: sum
+		sourceColumn: Is Dropout
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Program Status'
+		dataType: string
+		lineageTag: 685fb450-e50b-43e1-9bc0-18ee77ea00c7
+		summarizeBy: none
+		sourceColumn: Program Status
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Learners = m
+		mode: import
+		source =
+				let
+				    Base = Status,
+				
+				    // Zoom activity per learner
+				    ZoomSummary = Table.Group(Attendance, {"Cohort", "Track", "Email"}, {
+				        {"Learner Name",        each List.First([Learner Name]), type text},
+				        {"Days Present",        each Table.RowCount(_), Int64.Type},
+				        {"Days Attended",       each List.Sum([Attended]), Int64.Type},
+				        {"Total Minutes",       each List.Sum([Minutes]), type number},
+				        {"Last Attended Date",  each List.Max(Table.SelectRows(_, each [Attended] = 1)[Date]), type date}}),
+				
+				    // Class days and end date for each cohort + track
+				    ProgramInfo = Table.Group(Attendance, {"Cohort", "Track"}, {
+				        {"Class Days",       each List.Count(List.Distinct([Date])), Int64.Type},
+				        {"Program End Date", each List.Max([Date]), type date}}),
+				
+				    Join1 = Table.NestedJoin(Base, {"Cohort", "Track", "Email"},
+				             ZoomSummary, {"Cohort", "Track", "Email"}, "Z", JoinKind.LeftOuter),
+				    Exp1  = Table.ExpandTableColumn(Join1, "Z", {"Learner Name", "Days Present",
+				             "Days Attended", "Total Minutes", "Last Attended Date"}),
+				    Join2 = Table.NestedJoin(Exp1, {"Cohort", "Track"},
+				             ProgramInfo, {"Cohort", "Track"}, "P", JoinKind.LeftOuter),
+				    Exp2  = Table.ExpandTableColumn(Join2, "P", {"Class Days", "Program End Date"}),
+				
+				    FixNulls = Table.ReplaceValue(Exp2, null, 0, Replacer.ReplaceValue,
+				                {"Days Present", "Days Attended", "Total Minutes"}),
+				    FixName  = Table.AddColumn(FixNulls, "Name", each
+				                if [Learner Name] = null then [Email] else [Learner Name], type text),
+				    DropOldName = Table.RenameColumns(Table.RemoveColumns(FixName, {"Learner Name"}), {{"Name", "Learner Name"}}),
+				
+				    // Truncated = did not attend (>30 min) every class session of their track
+				    AddAttStatus = Table.AddColumn(DropOldName, "Attendance Status", each
+				                if [Days Attended] < [Class Days] then "Truncated" else "Complete", type text),
+				
+				    // Dropout = Non Graduate AND Not Certified AND Truncated (all three)
+				    AddDropout = Table.AddColumn(AddAttStatus, "Is Dropout", each
+				                if Text.StartsWith(Text.Lower([Graduation Status]), "non")
+				                   and Text.Lower([Certification Status]) = "not certified"
+				                   and [Attendance Status] = "Truncated"
+				                then 1 else 0, Int64.Type),
+				
+				    AddProgStatus = Table.AddColumn(AddDropout, "Program Status", each
+				                if [Program End Date] < Date.From(DateTime.LocalNow())
+				                then "Completed" else "Ongoing", type text)
+				in
+				    AddProgStatus
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+
