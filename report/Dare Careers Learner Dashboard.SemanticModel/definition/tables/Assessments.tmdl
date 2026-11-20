@@ -1,43 +1,59 @@
 table Assessments
+	isHidden
 	lineageTag: 6e12f11c-4f08-45c4-ae04-ca031fc23bdc
 
 	column Cohort
 		dataType: string
+		isHidden
 		lineageTag: 69614611-ac37-4dfc-abbd-eb6dfbcd8cf3
 		summarizeBy: none
 		sourceColumn: Cohort
+
+		changedProperty = IsHidden
 
 		annotation SummarizationSetBy = Automatic
 
 	column Track
 		dataType: string
+		isHidden
 		lineageTag: f803adb0-069e-4a3a-b434-838a85f10297
 		summarizeBy: none
 		sourceColumn: Track
+
+		changedProperty = IsHidden
 
 		annotation SummarizationSetBy = Automatic
 
 	column 'Assessment Type'
 		dataType: string
+		isHidden
 		lineageTag: df07d723-e33e-49e6-a749-5cc0200be892
 		summarizeBy: none
 		sourceColumn: Assessment Type
+
+		changedProperty = IsHidden
 
 		annotation SummarizationSetBy = Automatic
 
 	column Email
 		dataType: string
+		isHidden
 		lineageTag: bd4fca81-3ba9-4d95-8466-19773f0f12fc
 		summarizeBy: none
 		sourceColumn: Email
+
+		changedProperty = IsHidden
 
 		annotation SummarizationSetBy = Automatic
 
 	column Score
 		dataType: double
+		isHidden
 		lineageTag: 04070f24-4038-45dc-915d-49382a76ebc5
 		summarizeBy: sum
 		sourceColumn: Score
+
+		changedProperty = IsHidden
 
 		annotation SummarizationSetBy = Automatic
 
@@ -45,33 +61,37 @@ table Assessments
 
 	column Week
 		dataType: int64
+		isHidden
 		formatString: 0
 		lineageTag: 9653f4b0-8065-410e-a7c4-42aec7a0a669
-		summarizeBy: sum
+		summarizeBy: none
 		sourceColumn: Week
+
+		changedProperty = IsHidden
 
 		annotation SummarizationSetBy = Automatic
 
 	column Completed
 		dataType: int64
+		isHidden
 		formatString: 0
 		lineageTag: d0e01aaa-9836-40ab-ad0c-5269f993ae1d
 		summarizeBy: sum
 		sourceColumn: Completed
 
+		changedProperty = IsHidden
+
 		annotation SummarizationSetBy = Automatic
 
 	column Date
 		dataType: dateTime
+		isHidden
 		formatString: Long Date
 		lineageTag: 3fa27948-0de1-42b0-afe2-752ea63882d1
 		summarizeBy: none
 		sourceColumn: Date
 
-		variation Variation
-			isDefault
-			relationship: 428a6197-a1df-434a-a276-51c69df33456
-			defaultHierarchy: LocalDateTable_0234382f-b8c5-4bba-a14f-9423585a8885.'Date Hierarchy'
+		changedProperty = IsHidden
 
 		annotation SummarizationSetBy = Automatic
 
@@ -130,6 +150,8 @@ table Assessments
 				    WithDate  = Table.ExpandTableColumn(JoinDate, "W", {"Date"})
 				in
 				    WithDate
+
+	changedProperty = IsHidden
 
 	annotation PBI_NavigationStepName = Navigation
 
