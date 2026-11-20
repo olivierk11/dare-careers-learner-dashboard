@@ -1,0 +1,54 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
+  "name": "e23653b294491e903389",
+  "position": {
+    "x": 627.14285714285722,
+    "y": 5.7142857142857144,
+    "z": 1000,
+    "height": 74.285714285714292,
+    "width": 138.57142857142858,
+    "tabOrder": 1000
+  },
+  "visual": {
+    "visualType": "slicer",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Learners"
+                    }
+                  },
+                  "Property": "Cohort"
+                }
+              },
+              "queryRef": "Learners.Cohort",
+              "nativeQueryRef": "Cohort",
+              "active": true
+            }
+          ]
+        }
+      }
+    },
+    "objects": {
+      "data": [
+        {
+          "properties": {
+            "mode": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Dropdown'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}
